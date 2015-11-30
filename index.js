@@ -1,6 +1,9 @@
 var SlackBot = require('slackbots');
 var report = require('nomniture').Report;
 var moment = require('moment');
+var http = require('http'); 
+
+http.createServer().listen(process.env.PORT || 5000);
 
 var channels;
 var users;
@@ -51,10 +54,14 @@ bot.on('start', function(){
 						first_name = userObj.profile.first_name;
 						
 						// Let's see what the person had to say
+						console.log("From " + name + "(" + username + "): " + message.text);
+						
 						
 						// If they asked for help, give it to them
 						if( message.text.indexOf("help") == 0 ){
-							bot.postMessageToUser(username, "I fetch traffic stats from Omniture for you! Give me a search term in quotes (author names work) and a time period in parenthesis and I'll get to work.");
+							bot_response = "I fetch traffic stats from Omniture for you! Give me a search term in quotes (author names work) and a time period in parenthesis and I'll get to work.";
+							bot.postMessageToUser(username, bot_response);
+							console.log("To " + name + ": " + bot_response )
 						}
 						
 						// Otherwise, let's figure out their search query and timespan
@@ -71,7 +78,9 @@ bot.on('start', function(){
 							
 							// If they've already selected a time and a search string, let them eat cake.
 							if( user.time && user.search){
-								bot.postMessageToUser(username, "I'm already looking something up for you! You can ask me another question when I'm done with this one.");
+								bot_response = "I'm already looking something up for you! You can ask me another question when I'm done with this one.";
+								bot.postMessageToUser(username, bot_response);
+								console.log("To " + name + ": " + bot_response )
 							}
 							else {
 								// Look for a search string in quotes
@@ -89,7 +98,9 @@ bot.on('start', function(){
 									// Grab numbers
 									var search = new RegExp(/\d+/g);
 									if( !search.test(result) ){
-										bot.postMessageToUser(username, "Erg, I need my time elements to be numerals (`2`), not words (`two`).");										
+										bot_response = "Erg, I need my time elements to be numerals (`2`), not words (`two`).";
+										bot.postMessageToUser(username, bot_response);										
+										console.log("To " + name + ": " + bot_response );
 									}
 									else {
 										var number =  search.exec(message.text)[0];
@@ -111,7 +122,9 @@ bot.on('start', function(){
 											time_element = "years";
 										}
 										else {
-											bot.postMessageToUser(username, "Doesn't look like there's a time element I understand. I understand `hours`, `days`, `weeks`, `months` and `years`.")
+											bot_response = "Doesn't look like there's a time element I understand. I understand `hours`, `days`, `weeks`, `months` and `years`.";
+											bot.postMessageToUser(username, bot_response)
+											console.log("To " + name + ": " + bot_response);
 										}
 									
 										if(time_element){
@@ -149,28 +162,31 @@ bot.on('start', function(){
 										response = JSON.parse(response);
 
 										if( response.report.data.length == 0 ){
-											var botText = "Oops! No traffic data found."	
+											var bot_response = "Oops! No traffic data found."	
 										}
 										else {
-											var botText = "Here you go! :chart_with_upwards_trend: :computer:";
+											var bot_response = "Here you go! :chart_with_upwards_trend: :computer:";
 											response.report.data.forEach(function(story, i){
-												botText += "\n*" + story.name + "*: `" + numberWithCommas(story.counts[0]) + "`\n";
+												bot_response += "\n*" + story.name + "*: `" + numberWithCommas(story.counts[0]) + "`\n";
 											});
 										}
 
 										// Remove username from the queue so they can make another request
 										requests.splice(requests.indexOf(user),1);
-										bot.postMessageToUser(username, botText);
-
+										bot.postMessageToUser(username, bot_response);
+										console.log("To " + name + ": " + bot_response)
 									});
 								}
 								else {
 									if(!user.search && !user.time)
-										bot.postMessageToUser(username, "I don't get it! I need a search string in quotes (like `\"mark twain\"`) and a time element in parenthesis (like `(1 week)`).");
+										bot_response = "I don't get it! I need a search string in quotes (like `\"mark twain\"`) and a time element in parenthesis (like `(1 week)`)."
 									else if(!user.time)
-										bot.postMessageToUser(username, "OK, now I need a time element in parenthesis, like `(1 month)` or `(last 2 weeks)`.");
+										bot_response = "OK, now I need a time element in parenthesis, like `(1 month)` or `(last 2 weeks)`.";
 									else if(!user.search)
-										bot.postMessageToUser(username, "Great, now I need a search string in quotes, like `\"mark twain\"`.");
+										bot_response = "Great, now I need a search string in quotes, like `\"mark twain\"`."
+										
+									bot.postMessageToUser(username, bot_response);
+									console.log("To " + name + ": " + bot_response);
 								}
 								
 							}
