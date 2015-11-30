@@ -86,7 +86,7 @@ bot.on('start', function(){
 								// Look for a search string in quotes
 								var search = new RegExp(/(“|")(.*?)(”|")/);
 								if( search.test(message.text) ){
-									var result = search.exec(message.text)[0].replace("“","").replace("”","").replace("\"", "");
+									var result = search.exec(message.text)[0].replace("“","").replace("”","").replace(/\"/g, "");
 									user.search = result;
 								} 
 
