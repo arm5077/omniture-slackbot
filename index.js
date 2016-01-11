@@ -144,7 +144,7 @@ bot.on('start', function(){
 									    "reportSuiteID": process.env.REPORTSUITEID,
 									    "dateFrom": user.time,
 									    "dateTo": moment().format('YYYY-MM-DD'),
-									    "metrics": [{'id': "pageviews"}],
+									    "metrics": [{'id': "visitors"}, {'id': "pageviews"}, {'id': 'totalTimeSpent'}],
 									    "elements": [
 									      {
 									        "id": "page",
@@ -157,17 +157,21 @@ bot.on('start', function(){
 									    ]
 									  }
 									}, function(err, response){
+										console.log(err);
 										if(err) throw err;
-
 										response = JSON.parse(response);
 
+										
 										if( response.report.data.length == 0 ){
 											var bot_response = "Oops! No traffic data found."	
 										}
-										else {
+										else {											
 											var bot_response = "Here you go! :chart_with_upwards_trend: :computer:";
 											response.report.data.forEach(function(story, i){
-												bot_response += "\n*" + story.name + "*: `" + numberWithCommas(story.counts[0]) + "`\n";
+												var visitors = parseInt(story.counts[0]);
+												var pageviews = parseInt(story.counts[1]);
+												var totalTimeSpent = parseInt(story.counts[2]);
+												bot_response += "\n>*" + story.name + "*\n>Visitors: `" + numberWithCommas(visitors) + "`      Pageviews: `" + numberWithCommas(pageviews) + "`      Time spent per visitor: `" + (Math.round(totalTimeSpent / visitors)) + " seconds`\n\n";
 											});
 										}
 
