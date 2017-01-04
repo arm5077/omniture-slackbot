@@ -134,6 +134,12 @@ bot.on('start', function(){
 									}
 								}
 								
+                // Look for Citylab tag (searches a different Omniture reporting suite)
+                if( message.text.indexOf("[citylab]") != -1 )
+                  var reportSuiteID = process.env.REPORTSUITEID;
+                else
+                  var reportSuiteID = process.env.ALTERNATE_REPORTSUITEID;
+
 								if( user.time && user.search ){
 									
 									bot.postMessageToUser(username, "OK, searching for \"" + user.search + "\" since " + user.time + "...");
@@ -141,7 +147,7 @@ bot.on('start', function(){
 									// Make Omniture request
 									r.request("Report.QueueRanked", {
 										"reportDescription": {
-									    "reportSuiteID": process.env.REPORTSUITEID,
+									    "reportSuiteID": reportSuiteID,
 									    "dateFrom": user.time,
 									    "dateTo": moment().format('YYYY-MM-DD'),
 									    "metrics": [{'id': "visitors"}, {'id': "pageviews"}, {'id': 'totalTimeSpent'}],
