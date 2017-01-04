@@ -135,7 +135,7 @@ bot.on('start', function(){
 								}
 								
                 // Look for Citylab tag (searches a different Omniture reporting suite)
-                if( message.text.indexOf("[citylab]") != -1 )
+                if( message.text.indexOf("[citylab]") == -1 )
                   var reportSuiteID = process.env.REPORTSUITEID;
                 else
                   var reportSuiteID = process.env.ALTERNATE_REPORTSUITEID;
