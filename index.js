@@ -61,7 +61,6 @@ bot.on('start', function(){
 						if( message.text.indexOf("help") == 0 ){
 							bot_response = "I fetch traffic stats from Omniture for you! Give me a search term in quotes (author names work) and a time period in parenthesis and I'll get to work.";
 							bot.postMessageToUser(username, bot_response);
-							console.log("To " + name + ": " + bot_response )
 						}
 						
 						// Otherwise, let's figure out their search query and timespan
@@ -80,7 +79,6 @@ bot.on('start', function(){
 							if( user.time && user.search){
 								bot_response = "I'm already looking something up for you! You can ask me another question when I'm done with this one.";
 								bot.postMessageToUser(username, bot_response);
-								console.log("To " + name + ": " + bot_response )
 							}
 							else {
 								// Look for a search string in quotes
@@ -100,7 +98,6 @@ bot.on('start', function(){
 									if( !search.test(result) ){
 										bot_response = "Erg, I need my time elements to be numerals (`2`), not words (`two`).";
 										bot.postMessageToUser(username, bot_response);										
-										console.log("To " + name + ": " + bot_response );
 									}
 									else {
 										var number =  search.exec(message.text)[0];
@@ -124,7 +121,6 @@ bot.on('start', function(){
 										else {
 											bot_response = "Doesn't look like there's a time element I understand. I understand `hours`, `days`, `weeks`, `months` and `years`.";
 											bot.postMessageToUser(username, bot_response)
-											console.log("To " + name + ": " + bot_response);
 										}
 									
 										if(time_element){
@@ -184,7 +180,6 @@ bot.on('start', function(){
 										// Remove username from the queue so they can make another request
 										requests.splice(requests.indexOf(user),1);
 										bot.postMessageToUser(username, bot_response);
-										console.log("To " + name + ": " + bot_response)
 									});
 								}
 								else {
@@ -196,7 +191,6 @@ bot.on('start', function(){
 										bot_response = "Great, now I need a search string in quotes, like `\"mark twain\"`."
 										
 									bot.postMessageToUser(username, bot_response);
-									console.log("To " + name + ": " + bot_response);
 								}
 								
 							}
